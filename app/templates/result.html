@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ process_name }} — SOP Builder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<nav class="navbar print-hide">
+    <div class="nav-inner">
+        <a href="/" class="nav-brand">⚙️ SOP Builder</a>
+        <a href="/history" class="nav-link">📋 History</a>
+    </div>
+</nav>
+
+<main class="result-page">
+    <div class="result-header print-hide">
+        <h1>{{ process_name }}</h1>
+        <p class="model-badge">{{ model_used }}</p>
+        <div class="action-buttons">
+            <a href="/print/{{ record_id }}" target="_blank" class="btn-secondary">🖨️ Clean PDF Export</a>
+            <button onclick="downloadMarkdown()" class="btn-secondary">⬇️ Markdown</button>
+            <button onclick="downloadBPMN()" class="btn-secondary">⬇️ BPMN XML</button>
+            <a href="/" class="btn-primary" style="width:auto;">⚡ Generate Another</a>
+        </div>
+    </div>
+
+    <div class="tabs print-hide">
+        <button class="tab-btn active" onclick="showTab('sop', event)">📄 SOP Document</button>
+        <button class="tab-btn" onclick="showTab('bpmn', event)">📊 Process Diagram</button>
+    </div>
+
+    <div id="tab-sop" class="tab-content active">
+        <div class="sop-document">
+            {{ sop_html | safe }}
+        </div>
+    </div>
+
+    <div id="tab-bpmn" class="tab-content print-hide">
+        {% if mermaid_code %}
+            <div class="bpmn-toolbar">
+                <span class="bpmn-label">📊 Process Flow Diagram</span>
+		<button onclick="downloadDiagram()" class="btn-secondary">⬇️ Download Diagram PNG</button>
+                {% if bpmn_xml %}
+                <button onclick="downloadBPMN()" class="btn-secondary">⬇️ Download BPMN XML</button>
+                <a href="https://demo.bpmn.io" target="_blank" class="btn-secondary">🔗 Open in BPMN Editor</a>
+                {% endif %}
+            </div>
+            <div class="mermaid-wrapper">
+                <div id="mermaid-output"></div>
+            </div>
+        {% else %}
+            <div class="alert alert-error">
+                Diagram could not be generated. Try regenerating the SOP.
+            </div>
+        {% endif %}
+    </div>
+</main>
+
+<footer class="footer print-hide">
+    <p>Built by <strong>Siddique Abubakr Muntaka</strong> &amp; <strong>Dogbe, Abigail</strong></p>
+    <span class="course-info">AI for SOPs and Process Documentation &nbsp;|&nbsp; School of Information Technology, University of Cincinnati &nbsp;|&nbsp; Prof. Dr. Michael Zidar</span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+    const bpmnXml     = {{ bpmn_xml     | tojson }};
+    const sopRaw      = {{ sop_raw      | tojson }};
+    const processName = {{ process_name | tojson }};
+    const recordId    = {{ record_id    | tojson }};
+    const mermaidCode = {{ mermaid_code | tojson }};
+
+    mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        securityLevel: 'loose',
+        flowchart: { useMaxWidth: true, htmlLabels: true }
+    });
+
+    async function renderMermaidDiagram() {
+        const output = document.getElementById('mermaid-output');
+        if (!output || !mermaidCode) return;
+        try {
+            const { svg } = await mermaid.render('mermaid-svg', mermaidCode);
+            output.innerHTML = svg;
+        } catch (err) {
+            console.error('Mermaid error:', err);
+            output.innerHTML = `
+                <div style="padding:2rem;text-align:center;color:#666;font-family:monospace;font-size:0.85rem;">
+                    <p style="margin-bottom:1rem;font-size:1rem;">⚠️ Diagram rendering failed.</p>
+                    <p style="margin-bottom:1rem;">Download the BPMN XML and open it at
+                    <a href="https://demo.bpmn.io" target="_blank" style="color:#f0a500;">demo.bpmn.io</a></p>
+                    <details style="text-align:left;margin-top:1rem;">
+                        <summary style="cursor:pointer;color:#f0a500;">View raw diagram code</summary>
+                        <pre style="margin-top:0.5rem;padding:1rem;background:#f5f5f5;border-radius:4px;overflow:auto;font-size:0.8rem;">${mermaidCode}</pre>
+                    </details>
+                </div>`;
+        }
+    }
+</script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

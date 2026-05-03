@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOP History — SOP Builder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-inner">
+        <a href="/" class="nav-brand">⚙️ SOP Builder</a>
+        <a href="/history" class="nav-link">📋 History</a>
+    </div>
+</nav>
+
+<main class="history-page">
+    <h1>Generated SOPs</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if records %}
+        <div class="history-grid">
+            {% for record in records %}
+            <div class="history-card">
+                <h3>{{ record.process_name }}</h3>
+                <p class="history-desc">{{ record.description[:120] }}{% if record.description|length > 120 %}...{% endif %}</p>
+                <div class="history-meta">
+                    <span class="model-badge">{{ record.ai_model_used }}</span>
+                    <span class="date">{{ record.created_at.strftime('%b %d, %Y %H:%M') }}</span>
+                </div>
+                <div class="history-actions">
+                    <a href="/view/{{ record.id }}" class="btn-primary" style="width:auto;">View SOP</a>
+                    <form action="/delete/{{ record.id }}" method="POST" style="display:inline"
+                        onsubmit="return confirm('Delete this SOP?')">
+                        <button type="submit" class="btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>No SOPs generated yet.</p>
+            <a href="/" class="btn-primary" style="width:auto;">Generate Your First SOP</a>
+        </div>
+    {% endif %}
+</main>
+
+<footer class="footer">
+    <p>Built by <strong>Siddique Abubakr Muntaka</strong> &amp; <strong>Dogbe, Abigail</strong></p>
+    <span class="course-info">AI for SOPs and Process Documentation &nbsp;|&nbsp; School of Information Technology, University of Cincinnati &nbsp;|&nbsp; Prof. Dr. Michael Zidar</span>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOP Builder — AI-Powered SOP Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Generating your SOP...</div>
+    <div class="loading-sub">Calling AI • Building BPMN • Saving record</div>
+</div>
+
+<nav class="navbar">
+    <div class="nav-inner">
+        <a href="/" class="nav-brand">⚙️ SOP Builder</a>
+        <a href="/history" class="nav-link">📋 History</a>
+    </div>
+</nav>
+
+<main class="hero">
+    <div class="hero-text">
+        <h1>Generate Professional SOPs Instantly</h1>
+        <p>Describe your process. Get a complete Standard Operating Procedure with BPMN diagram in seconds — powered by AI.</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card">
+        <form action="/generate" method="POST" id="sop-form">
+            <div class="form-group">
+                <label for="process_name">Process Name <span class="required">*</span></label>
+                <input type="text" id="process_name" name="process_name"
+                    placeholder="e.g. Employee Onboarding, Invoice Approval, Lab Sample Processing"
+                    required maxlength="200">
+            </div>
+            <div class="form-group">
+                <label for="description">Process Description <span class="required">*</span></label>
+                <textarea id="description" name="description" rows="5"
+                    placeholder="Describe what this process does, when it happens, and what the goal is. The more detail you provide, the better the SOP."
+                    required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="roles">Roles Involved <span class="optional">(optional)</span></label>
+                <input type="text" id="roles" name="roles"
+                    placeholder="e.g. HR Manager, Employee, IT Admin, Department Head">
+            </div>
+            <div class="form-group">
+                <label for="exceptions">Known Exceptions or Edge Cases <span class="optional">(optional)</span></label>
+                <textarea id="exceptions" name="exceptions" rows="3"
+                    placeholder="e.g. What happens when a step fails? Any workarounds? Special cases?"></textarea>
+            </div>
+            <button type="submit" class="btn-primary" id="submit-btn">
+                ⚡ Generate SOP + BPMN Diagram
+            </button>
+        </form>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>Built by <strong>Siddique Abubakr Muntaka</strong> &amp; <strong>Dogbe Abigail</strong></p>
+    <span class="course-info">Course - IT7039: AI for SOPs and Process Documentation &nbsp;|&nbsp; School of Information Technology, University of Cincinnati &nbsp;|&nbsp; Course Professor: Dr. Michael Zidar</span>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
