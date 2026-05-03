@@ -28,7 +28,7 @@
 <table>
 <tr>
 <td align="center"><b>Siddique Abubakr Muntaka</b></td>
-<td align="center"><b>Dogbe, Abigail</b></td>
+<td align="center"><b>Dogbe Abigail</b></td>
 </tr>
 </table>
 
