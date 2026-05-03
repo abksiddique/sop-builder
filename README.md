@@ -145,7 +145,7 @@ MIT License — free to use, modify, and distribute.
 
 <div align="center">
 
-Built with ❤️ by **Siddique Abubakr Muntaka** & **Dogbe, Abigail**
+Built with ❤️ by **Siddique Abubakr Muntaka** & **Dogbe Abigail**
 School of Information Technology · University of Cincinnati · 2025
 
 </div>
