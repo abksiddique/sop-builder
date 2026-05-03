@@ -28,7 +28,7 @@ def generate():
     )
 
     if not sop_content:
-        flash('AI generation failed. Please try again in a moment.', 'error')
+        flash('⚠️ AI service daily limit reached. Both Gemini and Groq free-tier APIs have hit their usage quota. This resets automatically within 24 hours - please try again later.', 'error')
         return redirect(url_for('main.index'))
 
     sop_html = md.markdown(sop_content, extensions=['extra'])
